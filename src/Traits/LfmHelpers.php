@@ -575,8 +575,14 @@ trait LfmHelpers
             $key_to_sort = 'updated';
         }
 
-        uasort($arr_items, function ($a, $b) use ($key_to_sort) {
-            return strcmp($a->{$key_to_sort}, $b->{$key_to_sort});
+        uasort($arr_items, function ($a, $b) use ($key_to_sort) {            
+            if ($key_to_sort == 'updated') {
+                // ordenar de mayor a menor 100-10
+                return strcmp($b->{$key_to_sort}, $a->{$key_to_sort});
+            }
+            
+            // ordenar de menor a mayor A-Z
+            return strcmp(strtolower($a->{$key_to_sort}), strtolower($b->{$key_to_sort}));
         });
 
         return $arr_items;
