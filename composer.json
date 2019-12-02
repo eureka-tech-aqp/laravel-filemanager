@@ -1,5 +1,5 @@
 {
-  "name": "eureka-tech-aqp/laravel-filemanager",
+  "name": "unisharp/laravel-filemanager",
   "description": "A file upload/editor intended for use with Laravel 6 and CKEditor / TinyMCE",
   "license": "MIT",
   "keywords": [
