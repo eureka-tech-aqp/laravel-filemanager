@@ -44,22 +44,9 @@ return [
     'error-file-exist'  => '¡Ya existe un archivo con este nombre!',
     'error-file-size'   => '¡El tamaño del archivo supera el límite del servidor! (tamaño máx.: :max)',
     'error-delete-folder'=> '¡No puedes eliminar esta carpeta porque no está vacía!',
-<<<<<<< HEAD
-    'error-folder-name' => '¡El nombre de carpeta no puede ser vacío!',
-    'error-folder-exist'=> '¡Ya existe una carpeta con este nombre!',
-    'error-folder-alnum'=> '¡Únicamente son soportados nombres de carpetas alfanuméricos!',
-    'error-folder-not-found'=> '¡La carpeta no ha sido encontrada! (:folder)',
-    'error-mime'        => 'MimeType inesperado: ',
-    'error-size'        => 'Supera el tamaño máximo:',
-    'error-instance'    => 'El archivo subido debe ser una instancia de UploadedFile',
-    'error-invalid'     => 'Petición de subida inválida',
-    'error-other'       => 'Se ha producido un error: ',
-    'error-too-large'   => '¡Entidad de petición demasiado grande!',
-=======
     'error-folder-name' => '¡Nombre de carpeta no puede ser vacío!',
     'error-folder-exist'=> '¡Ya existe una carpeta con este nombre!', 
     'error-folder-name-invalid' => '¡Nombre de carpeta inválido!',
->>>>>>> v3.4
 
     'btn-upload'        => 'Subir Archivo',
     'btn-uploading'     => 'Subiendo...',
