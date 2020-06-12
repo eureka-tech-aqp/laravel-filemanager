@@ -47,15 +47,7 @@
       "UniSharp\\LaravelFilemanager\\": "src/"
     }
   },
-<<<<<<< HEAD
-  "autoload-dev": {
-    "psr-4": {
-        "Tests\\": "tests"
-    }
-  },
-=======
   "bin": ["bin/debug"],
->>>>>>> v3.4
   "extra": {
     "laravel": {
       "providers": [
