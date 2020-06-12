@@ -2,11 +2,9 @@
 
 namespace UniSharp\LaravelFilemanager\Controllers;
 
-use UniSharp\LaravelFilemanager\Events\FileIsMoving;
-use UniSharp\LaravelFilemanager\Events\FileWasMoving;
-use UniSharp\LaravelFilemanager\Events\FolderIsMoving;
-use UniSharp\LaravelFilemanager\Events\FolderWasMoving;
-
+/**
+ * Class ItemsController.
+ */
 class ItemsController extends LfmController
 {
     /**
@@ -16,64 +14,47 @@ class ItemsController extends LfmController
      */
     public function getItems()
     {
+        $path = parent::getCurrentPath();
+        $sort_type = request('sort_type');
+
+        $files = parent::sortFilesAndDirectories(parent::getFilesWithInfo($path), $sort_type);
+        $directories = parent::sortFilesAndDirectories(parent::getDirectories($path), $sort_type);
+
         return [
-            'items' => array_map(function ($item) {
-                return $item->fill()->attributes;
-            }, array_merge($this->lfm->folders(), $this->lfm->files())),
-            'display' => $this->helper->getDisplayMode(),
-            'working_dir' => $this->lfm->path('working_dir'),
+            'html' => (string) view($this->getView())->with([
+                'files'       => $files,
+                'directories' => $directories,
+                'items'       => array_merge($directories, $files),
+            ]),
+            'working_dir' => parent::getInternalPath($path),
         ];
     }
 
-    public function move()
+    private function getView()
     {
-        $items = request('items');
-        $folder_types = array_filter(['user', 'share'], function ($type) {
-            return $this->helper->allowFolderType($type);
-        });
-        return view('laravel-filemanager::move')
-            ->with([
-                'root_folders' => array_map(function ($type) use ($folder_types) {
-                    $path = $this->lfm->dir($this->helper->getRootFolder($type));
+        $view_type = request('show_list');
 
-                    return (object) [
-                        'name' => trans('laravel-filemanager::lfm.title-' . $type),
-                        'url' => $path->path('working_dir'),
-                        'children' => $path->folders(),
-                        'has_next' => ! ($type == end($folder_types)),
-                    ];
-                }, $folder_types),
-            ])
-            ->with('items', $items);
+        if (null === $view_type) {
+            return $this->composeViewName($this->getStartupViewFromConfig());
+        }
+
+        $view_mapping = [
+            '0' => 'grid',
+            '1' => 'list'
+        ];
+
+        return $this->composeViewName($view_mapping[$view_type]);
     }
 
-    public function domove()
+    private function composeViewName($view_type = 'grid')
     {
-        $target = $this->helper->input('goToFolder');
-        $items = $this->helper->input('items');
+        return "laravel-filemanager::$view_type-view";
+    }
 
-        foreach ($items as $item) {
-            $old_file = $this->lfm->pretty($item);
-            $is_directory = $old_file->isDirectory();
-
-            if ($old_file->hasThumb()) {
-                $new_file = $this->lfm->setName($item)->thumb()->dir($target);
-                if ($is_directory) {
-                    event(new FolderIsMoving($old_file->path(), $new_file->path()));
-                } else {
-                    event(new FileIsMoving($old_file->path(), $new_file->path()));
-                }
-                $this->lfm->setName($item)->thumb()->move($new_file);
-            }
-            $new_file = $this->lfm->setName($item)->dir($target);
-            $this->lfm->setName($item)->move($new_file);
-            if ($is_directory) {
-                event(new FolderWasMoving($old_file->path(), $new_file->path()));
-            } else {
-                event(new FileWasMoving($old_file->path(), $new_file->path()));
-            }
-        };
-
-        return parent::$success_response;
+    private function getStartupViewFromConfig($default = 'grid')
+    {
+        $type_key = parent::currentLfmType();
+        $startup_view = config('lfm.' . $type_key . 's_startup_view', $default);
+        return $startup_view;
     }
 }

@@ -2,9 +2,13 @@
 
 namespace UniSharp\LaravelFilemanager\Controllers;
 
+use Illuminate\Support\Facades\File;
 use UniSharp\LaravelFilemanager\Events\ImageIsDeleting;
 use UniSharp\LaravelFilemanager\Events\ImageWasDeleted;
 
+/**
+ * Class CropController.
+ */
 class DeleteController extends LfmController
 {
     /**
@@ -14,44 +18,38 @@ class DeleteController extends LfmController
      */
     public function getDelete()
     {
-        $item_names = request('items');
-        $errors = [];
+        $name_to_delete = request('items');
 
-        foreach ($item_names as $name_to_delete) {
-            $file_to_delete = $this->lfm->pretty($name_to_delete);
-            $file_path = $file_to_delete->path();
+        $file_to_delete = parent::getCurrentPath($name_to_delete);
+        $thumb_to_delete = parent::getThumbPath($name_to_delete);
 
-            event(new ImageIsDeleting($file_path));
+        event(new ImageIsDeleting($file_to_delete));
 
-            if (is_null($name_to_delete)) {
-                array_push($errors, parent::error('folder-name'));
-                continue;
-            }
-
-            if (! $this->lfm->setName($name_to_delete)->exists()) {
-                array_push($errors, parent::error('folder-not-found', ['folder' => $file_path]));
-                continue;
-            }
-
-            if ($this->lfm->setName($name_to_delete)->isDirectory()) {
-                if (! $this->lfm->setName($name_to_delete)->directoryIsEmpty()) {
-                    array_push($errors, parent::error('delete-folder'));
-                    continue;
-                }
-            } else {
-                if ($file_to_delete->isImage()) {
-                    $this->lfm->setName($name_to_delete)->thumb()->delete();
-                }
-            }
-
-            $this->lfm->setName($name_to_delete)->delete();
-
-            event(new ImageWasDeleted($file_path));
+        if (is_null($name_to_delete)) {
+            return parent::error('folder-name');
         }
 
-        if (count($errors) > 0) {
-            return $errors;
+        if (! File::exists($file_to_delete)) {
+            return parent::error('folder-not-found', ['folder' => htmlspecialchars($file_to_delete)]);
         }
+
+        if (File::isDirectory($file_to_delete)) {
+            if (! parent::directoryIsEmpty($file_to_delete)) {
+                return parent::error('delete-folder');
+            }
+
+            File::deleteDirectory($file_to_delete);
+
+            return parent::$success_response;
+        }
+
+        if (parent::fileIsImage($file_to_delete)) {
+            File::delete($thumb_to_delete);
+        }
+
+        File::delete($file_to_delete);
+
+        event(new ImageWasDeleted($file_to_delete));
 
         return parent::$success_response;
     }

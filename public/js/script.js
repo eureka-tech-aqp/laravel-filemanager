@@ -1,35 +1,6 @@
 var lfm_route = location.origin + location.pathname;
 var show_list;
-var sort_type = 'alphabetic';
-var multi_selection_enabled = false;
-var selected = [];
-var items = [];
-
-$.fn.fab = function (options) {
-  var menu = this;
-  menu.addClass('fab-wrapper');
-
-  var toggler = $('<a>')
-    .addClass('fab-button fab-toggle')
-    .append($('<i>').addClass('fas fa-plus'))
-    .click(function () {
-      menu.toggleClass('fab-expand');
-    });
-
-  menu.append(toggler);
-
-  options.buttons.forEach(function (button) {
-    toggler.before(
-      $('<a>').addClass('fab-button fab-action')
-        .attr('data-label', button.label)
-        .attr('id', button.attrs.id)
-        .append($('<i>').addClass(button.icon))
-        .click(function () {
-          menu.removeClass('fab-expand');
-        })
-    );
-  });
-};
+var sort_type = 'updated';
 
 $(document).ready(function () {
   $('#fab').fab({
@@ -289,6 +260,7 @@ function displayErrorResponse(jqXHR) {
 
 var refreshFoldersAndItems = function (data) {
   loadFolders();
+  data = data.replace(/\s/g,'');
   if (data != 'OK') {
     data = Array.isArray(data) ? data.join('<br/>') : data;
     notify(data);
@@ -663,8 +635,4 @@ function dialog(title, value, callback) {
   $('#dialog').on('shown.bs.modal', function () {
     $('#dialog').find('input').focus();
   });
-  $('#dialog').find('.btn-primary').unbind().click(function (e) {
-    callback($('#dialog').find('input').val());
-  });
-  $('#dialog').modal('show').find('.modal-title').text(title);
 }

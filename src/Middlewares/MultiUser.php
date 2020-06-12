@@ -3,7 +3,11 @@
 namespace UniSharp\LaravelFilemanager\Middlewares;
 
 use Closure;
+<<<<<<< HEAD:src/Middlewares/MultiUser.php
 use UniSharp\LaravelFilemanager\Lfm;
+=======
+use UniSharp\LaravelFilemanager\Traits\LfmHelpers;
+>>>>>>> v3.4:src/middlewares/MultiUser.php
 
 class MultiUser
 {

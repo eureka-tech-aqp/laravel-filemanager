@@ -28,7 +28,16 @@ return [
 
     'allow_multi_user'         => true,
 
+<<<<<<< HEAD
     'allow_share_folder'       => true,
+=======
+    // Flexible way to customize client folders accessibility
+    // If you want to customize client folders, publish tag="lfm_handler"
+    // Then you can rewrite userField function in App\Handler\ConfigHander class
+    // And set 'user_field' to App\Handler\ConfigHander::class
+    // Ex: The private folder of user will be named as the user id.
+    'user_field' => UniSharp\LaravelFilemanager\Handlers\ConfigHandler::class,
+>>>>>>> v3.4
 
     /*
     |--------------------------------------------------------------------------
@@ -126,7 +135,27 @@ return [
 
     'thumb_img_width'          => 200,
 
+<<<<<<< HEAD
     'thumb_img_height'         => 200,
+=======
+    // permissions to be set on file upload.
+    'create_file_mode' => 0644,
+    
+    // If true, it will attempt to chmod the file after upload
+    'should_change_file_mode' => true,
+
+    // available since v1.3.0
+    // only when '/laravel-filemanager?type=Files'
+    'valid_file_mimetypes' => [
+        'image/jpeg',
+        'image/pjpeg',
+        'image/png',
+        'image/gif',
+        'image/svg+xml',
+        'application/pdf',
+        'text/plain',
+    ],
+>>>>>>> v3.4
 
     /*
     |--------------------------------------------------------------------------
