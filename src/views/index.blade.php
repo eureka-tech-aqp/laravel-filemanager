@@ -199,6 +199,7 @@
       init: function() {
         var _this = this; // For the closure
         this.on('success', function(file, response) {
+          response = response.replace(/\s/g,'');
           if (response == 'OK') {
             refreshFoldersAndItems('OK');
           } else {
