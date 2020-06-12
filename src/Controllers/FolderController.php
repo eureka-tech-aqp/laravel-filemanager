@@ -52,9 +52,29 @@ class FolderController extends LfmController
      *
      * @return mixed
      */
-    public function getAddfolder()
+    public function getAddfolder()  // error-folder-name-invalid
     {
-        $folder_name = parent::translateFromUtf8(trim(request('name')));
+        $folder_name = parent::translateFromUtf8(trim(request('name')));        
+
+        if (!preg_match("/^[a-z0-9áéíóúàèìòùñÁÉÍÓÚÀÈÌÒÙÑ \-_]+$/i", $folder_name)) {   
+            return parent::error('folder-name-invalid');
+        } else {
+            $separator = ' '; 
+            $language  = 'en'; 
+            $title     = parent::ascii($folder_name, $language); 
+            // Convert all dashes/underscores into separator
+            $flip = $separator;
+            $title = preg_replace('!['.preg_quote($flip).']+!u', $separator, $title);
+            // Replace @ with the word 'at'
+            $title = str_replace('@', $separator.'at'.$separator, $title);
+            // Remove all characters that are not the separator, letters, numbers, or whitespace.
+            // With lower case: $title = preg_replace('![^'.preg_quote($separator).'\pL\pN\s]+!u', '', mb_strtolower($title));
+            $title = preg_replace('![^'.preg_quote($separator).'\pL\pN\s]+!u', '', $title);
+            // Replace all separator characters and whitespace by a single separator
+            $title = preg_replace('!['.preg_quote($separator).'\s]+!u', $separator, $title);
+            $folder_name = trim($title, $separator); 
+        }
+
         $path = parent::getCurrentPath($folder_name);
 
         if (empty($folder_name)) {
@@ -67,7 +87,7 @@ class FolderController extends LfmController
 
         if (config('lfm.alphanumeric_directory') && preg_match('/[^\w-]/i', $folder_name)) {
             return parent::error('folder-alnum');
-        }
+        }    
 
         parent::createFolderByPath($path);
         return parent::$success_response;

@@ -42,7 +42,8 @@ return [
     'error-folder-alnum'=> 'Only alphanumeric folder names are allowed!',
     'error-delete-folder'=> '¡No puedes eliminar esta carpeta porque no está vacía!',
     'error-folder-name' => '¡Nombre de carpeta no puede ser vacío!',
-    'error-folder-exist'=> '¡Ya existe una carpeta con este nombre!',
+    'error-folder-exist'=> '¡Ya existe una carpeta con este nombre!', 
+    'error-folder-name-invalid' => '¡Nombre de carpeta inválido!',
 
     'btn-upload'        => 'Subir Archivo',
     'btn-close'         => 'Cerrar',

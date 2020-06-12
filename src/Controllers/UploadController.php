@@ -164,9 +164,25 @@ class UploadController extends LfmController
         return preg_replace("/\.php$/i", '', $name);
     }
 
-    private function getNewName($file)
+    private function getNewName($file) 
     {
         $new_filename = parent::translateFromUtf8(trim($this->pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)));
+
+        $separator = ''; 
+        $language  = 'en'; 
+        $title     = parent::ascii($new_filename, $language); 
+        // Convert all dashes/underscores into separator
+        $flip = $separator == '-' ? '_' : '-';
+        $title = preg_replace('!['.preg_quote($flip).']+!u', $separator, $title);
+        // Replace @ with the word 'at'
+        $title = str_replace('@', $separator.'at'.$separator, $title);
+        // Remove all characters that are not the separator, letters, numbers, or whitespace.
+        // With lower case: $title = preg_replace('![^'.preg_quote($separator).'\pL\pN\s]+!u', '', mb_strtolower($title));
+        $title = preg_replace('![^'.preg_quote($separator).'\pL\pN\s]+!u', '', $title);
+        // Replace all separator characters and whitespace by a single separator
+        $title = preg_replace('!['.preg_quote($separator).'\s]+!u', $separator, $title);
+        $new_filename = trim($title, $separator); 
+
         if (config('lfm.rename_file') === true) {
             $new_filename = uniqid();
         } elseif (config('lfm.alphanumeric_filename') === true) {
