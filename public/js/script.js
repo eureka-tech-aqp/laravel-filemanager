@@ -175,7 +175,6 @@ function displaySuccessMessage(data){
 
 var refreshFoldersAndItems = function (data) {
   loadFolders();
-  data = data.replace(/\s/g,'');
   if (data != 'OK') {
     data = Array.isArray(data) ? data.join('<br/>') : data;
     notify(data);
